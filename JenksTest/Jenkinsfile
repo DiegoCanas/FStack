@@ -28,10 +28,8 @@ pipeline {
             steps {
                 script {
                     // Paso para compilar tu aplicación
-                    dir('/var/lib/jenkins/workspace/TestPipe/FStack') {
-                        sh 'node server.js'
-                        sh 'curl http://localhost:3000'
-                    }
+                    sh 'node server.js'
+                    sh 'curl http://localhost:3000'
                     echo 'Build End'
                 }
             }
