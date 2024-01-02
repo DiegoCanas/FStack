@@ -1,0 +1,74 @@
+def clonarRepo(){
+    def repoURL = "https://github.com/DiegoCanas/onboarding"
+    def repoDir = "App" // Nombre del directorio destino
+
+    sh "git clone ${repoURL} ${repoDir}"
+    sh "cd FStack"
+    echo "clonarRepo"
+                        
+}
+
+
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                script {
+                    dir('/var/lib/jenkins/workspace/TestPipe') {
+                    checkout scm
+                    }   
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    // Paso para compilar tu aplicación
+                    dir('/var/lib/jenkins/workspace/TestPipe/FStack') {
+                        sh 'node server.js'
+                        sh 'curl http://localhost:3000'
+                    }
+                    echo 'Build End'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    // Paso para ejecutar pruebas
+                    echo 'Test'
+                    sh 'mvn test'
+                }
+            }
+        }
+
+        stage('Lint') {
+            steps {
+                script {
+                    echo 'Lint'
+                    // Paso para realizar el linting (análisis estático de código)
+                    // Puedes utilizar herramientas como ESLint para JavaScript, pylint para Python, etc.
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    echo 'Sonar'
+                    withSonarQubeEnv('NombreDeTuServidorSonarQube') {
+                        // Paso para ejecutar el análisis de SonarQube
+                        // Asegúrate de tener configurado SonarQube en la sección de configuración de Jenkins
+                        // y de haber vinculado tu proyecto con SonarQube
+                        sh 'mvn sonar:sonar'
+                    }
+                }
+            }
+        }
+    }
+}
