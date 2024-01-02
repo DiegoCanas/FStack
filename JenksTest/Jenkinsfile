@@ -24,7 +24,7 @@ pipeline {
             }
         }
 
-        stage('Buildd') {
+        stage('') {
             steps {
                 script {
                     // Paso para compilar tu aplicación
