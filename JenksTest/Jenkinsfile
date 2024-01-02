@@ -28,6 +28,7 @@ pipeline {
             steps {
                 script {
                     // Paso para compilar tu aplicación
+                    sh 'npm install'
                     sh 'node server.js'
                     sh 'curl http://localhost:3000'
                     echo 'Build End'
