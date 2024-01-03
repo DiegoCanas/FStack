@@ -1,47 +1,38 @@
 pipeline {
     agent any
-
     environment {
-        NEXUS_CREDENTIAL_ID = 'Nexus'
-        NEXUS_REPOSITORY = 'FStackRepo'
-        NEXUS_REGISTRY = 'http://localhost:8081'
+        NEXUS_CREDS = credentials('Nexus')
+        NEXUS_DOCKER_REPO = 'localhost:8081'
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    sh 'docker build -t webapp:latest .'
-                    // Añadir resto de comandos
+       
+       stage('Docker Build') {
+        
+            steps { 
+                    echo 'Building docker Image'
+                    sh 'docker build -t $NEXUS_DOCKER_REPO/fakeweb:$BUILD_NUMBER .'
                 }
-            }
         }
 
-        stage('Push to Nexus') {
+       stage('Docker Login') {
             steps {
-                script {
-                    // Tag de la imagen Docker
-                    def dockerImageTag = "webapp:latest"
-                    // Construir la URL de destino en Nexus
-                    def nexusDockerImage = "${NEXUS_REGISTRY}/repository/${NEXUS_REPOSITORY}/webapp/${dockerImageTag}/"
-                    
-                    // Autenticación en Nexus
-                    withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIAL_ID, usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
-                        // Hacer login en Nexus
-                        sh "echo \$NEXUS_PASSWORD | docker login -u \$NEXUS_USERNAME --password-stdin \$NEXUS_REGISTRY"
-                        // Hacer tag y push de la imagen a Nexus
-                        sh "docker push ${nexusDockerImage}"
-
-                        }
+                echo 'Nexus Docker Repository Login'
+                script{
+                    withCredentials([usernamePassword(credentialsId: 'nexus_creds', usernameVariable: 'USER', passwordVariable: 'PASS' )]){
+                       sh ' echo $PASS | docker login -u $USER --password-stdin $NEXUS_DOCKER_REPO'
                     }
+                   
                 }
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                echo 'Pushing Imgaet to docker hub'
+                sh 'docker push $NEXUS_DOCKER_REPO/fakeweb:$BUILD_NUMBER'
             }
         }
     }
+}
 
