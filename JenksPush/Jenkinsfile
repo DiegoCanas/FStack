@@ -30,7 +30,7 @@ pipeline {
                     // Tag de la imagen Docker
                     def dockerImageTag = "webapp:latest"
                     // Construir la URL de destino en Nexus
-                    nexusUrl = "${NEXUS_REGISTRY}/${NEXUS_REPOSITORY}/webapp/${dockerImageTag}/"
+                    def nexusDockerImage = "${NEXUS_REGISTRY}/${NEXUS_REPOSITORY}/webapp/${dockerImageTag}/"
                     
                     // Autenticación en Nexus
                     withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIAL_ID, usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
