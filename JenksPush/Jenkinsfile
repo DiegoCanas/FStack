@@ -4,8 +4,7 @@ pipeline {
     environment {
         NEXUS_CREDENTIAL_ID = 'Nexus'
         NEXUS_REPOSITORY = 'FStackRepo'
-        VERSION = '1.0.0'
-        NEXUS_REGISTRY = 'http://localhost:8081/repository'
+        NEXUS_REGISTRY = 'http://localhost:8081'
     }
 
     stages {
@@ -30,12 +29,12 @@ pipeline {
                     // Tag de la imagen Docker
                     def dockerImageTag = "webapp:latest"
                     // Construir la URL de destino en Nexus
-                    def nexusDockerImage = "${NEXUS_REGISTRY}/${NEXUS_REPOSITORY}/webapp/${dockerImageTag}/"
+                    def nexusDockerImage = "${NEXUS_REGISTRY}/repository/${NEXUS_REPOSITORY}/webapp/${dockerImageTag}/"
                     
                     // Autenticación en Nexus
                     withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIAL_ID, usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
                         // Hacer login en Nexus
-                        sh "docker login -u ${NEXUS_USERNAME} -p ${NEXUS_PASSWORD} ${NEXUS_REGISTRY}"
+                        sh "echo \$NEXUS_PASSWORD | docker login -u \$NEXUS_USERNAME --password-stdin \$NEXUS_REGISTRY"
                         // Hacer tag y push de la imagen a Nexus
                         sh "docker tag ${dockerImageTag} ${nexusDockerImage}"
                         sh "docker push ${nexusDockerImage}"
