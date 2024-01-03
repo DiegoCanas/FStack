@@ -1,37 +1,19 @@
-def clonarRepo(){
-    def repoURL = "https://github.com/DiegoCanas/onboarding"
-    def repoDir = "App" // Nombre del directorio destino
-
-    sh "git clone ${repoURL} ${repoDir}"
-    sh "cd FStack"
-    echo "clonarRepo"
-                        
-}
-
-
 pipeline {
     agent any
 
     stages {
-
         stage('Checkout') {
             steps {
-                script {
-                    dir('/var/lib/jenkins/workspace/TestPipe') {
-                    checkout scm
-                    }   
-                }
+                checkout scm
             }
         }
 
-        stage('') {
+        stage('Build') {
             steps {
                 script {
-                    // Paso para compilar tu aplicación
-                    sh 'npm install'
-                    sh 'node server.js'
-                    sh 'curl http://localhost:3000'
-                    echo 'Build End'
+                    // Lógica para construir tu proyecto
+                    echo 'Building...'
+                    sh 'npm install'  // Ejemplo para un proyecto de Node.js, ajusta según tu tecnología
                 }
             }
         }
@@ -39,9 +21,9 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    // Paso para ejecutar pruebas
-                    echo 'Test'
-                    sh 'mvn test'
+                    // Lógica para ejecutar pruebas
+                    echo 'Running tests...'
+                    sh 'npm test'  // Ejemplo para un proyecto de Node.js, ajusta según tu tecnología
                 }
             }
         }
@@ -49,9 +31,9 @@ pipeline {
         stage('Lint') {
             steps {
                 script {
-                    echo 'Lint'
-                    // Paso para realizar el linting (análisis estático de código)
-                    // Puedes utilizar herramientas como ESLint para JavaScript, pylint para Python, etc.
+                    // Lógica para ejecutar linters
+                    echo 'Linting...'
+                    sh 'npm run lint'  // Ejemplo para un proyecto de Node.js, ajusta según tu tecnología
                 }
             }
         }
@@ -59,15 +41,16 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    echo 'Sonar'
-                    withSonarQubeEnv('NombreDeTuServidorSonarQube') {
-                        // Paso para ejecutar el análisis de SonarQube
-                        // Asegúrate de tener configurado SonarQube en la sección de configuración de Jenkins
-                        // y de haber vinculado tu proyecto con SonarQube
-                        sh 'mvn sonar:sonar'
-                    }
+                    // Lógica para ejecutar el análisis de SonarQube
+                    echo 'Running SonarQube analysis...'
+                    // Asegúrate de configurar las propiedades adecuadas para tu proyecto
+                    // Aquí, se asume que SonarQube Scanner ya está instalado y configurado en tu entorno
+                    sh 'sonar-scanner'
                 }
             }
         }
+
+        // Puedes agregar más etapas según sea necesario
+
     }
 }
