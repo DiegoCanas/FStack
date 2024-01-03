@@ -36,7 +36,6 @@ pipeline {
                         // Hacer login en Nexus
                         sh "echo \$NEXUS_PASSWORD | docker login -u \$NEXUS_USERNAME --password-stdin \$NEXUS_REGISTRY"
                         // Hacer tag y push de la imagen a Nexus
-                        sh "docker tag ${dockerImageTag} ${nexusDockerImage}"
                         sh "docker push ${nexusDockerImage}"
 
                         }
