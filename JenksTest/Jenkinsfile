@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment{
-        SONARQUBE_HOSTNAME = localhost
+        SONARQUBE_HOSTNAME = 'localhost'
     }
 
     stages {
