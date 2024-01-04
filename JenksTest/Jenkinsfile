@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment{
+        SONARQUBE_HOSTNAME = localhost
+    }
 
     stages {
         stage('Checkout') {
@@ -11,9 +14,9 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Lógica para construir tu proyecto
                     echo 'Building...'
-                    sh 'npm install'  // Ejemplo para un proyecto de Node.js, ajusta según tu tecnología
+                    sh 'npm install'  
+                    //sh 'npm run build'
                 }
             }
         }
@@ -23,7 +26,7 @@ pipeline {
                 script {
                     // Lógica para ejecutar pruebas
                     echo 'Running tests...'
-                    sh 'npm test'  // Ejemplo para un proyecto de Node.js, ajusta según tu tecnología
+                    sh 'npm test'  
                 }
             }
         }
@@ -31,9 +34,8 @@ pipeline {
         stage('Lint') {
             steps {
                 script {
-                    // Lógica para ejecutar linters
                     echo 'Linting...'
-                    sh 'npm run lint'  // Ejemplo para un proyecto de Node.js, ajusta según tu tecnología
+                    sh 'npm run lint'  
                 }
             }
         }
@@ -41,16 +43,12 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    // Lógica para ejecutar el análisis de SonarQube
-                    echo 'Running SonarQube analysis...'
-                    // Asegúrate de configurar las propiedades adecuadas para tu proyecto
-                    // Aquí, se asume que SonarQube Scanner ya está instalado y configurado en tu entorno
-                    sh 'sonar-scanner'
+                    def sonarqubeScannerHome = tool name: 'sonar', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    withCredentials([usernamePassword(credentialsId: 'sonar', usernameVariable: 'USER', passwordVariable: 'PASS' )]) {
+                    sh "${sonarqubeScannerHome}/bin/sonar-scanner -e -Dsonar.host.url=http://${SONARQUBE_HOSTNAME}:9000 -Dsonar.login=${USER}:${PASS} -Dsonar.projectName=fsweb -Dsonar.projectVersion=${env.BUILD_NUMBER} -Dsonar.projectKey=GS -Dsonar.sources=src/main/ -Dsonar.tests=src/test/ -Dsonar.java.binaries=build/**/* -Dsonar.language=java"
+                    }
                 }
             }
         }
-
-        // Puedes agregar más etapas según sea necesario
-
     }
 }
