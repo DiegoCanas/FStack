@@ -27,4 +27,4 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: diegocanas
-          password: ${{ secrets.GH_TOKEN }}
+          password: ${{ secrets.DH_PASS }}
