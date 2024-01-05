@@ -29,4 +29,4 @@ jobs:
 
       - name: Push Docker image to GitHub Packages
         run: |
-          docker push docker.pkg.github.com/${{ github.repository }}/fsweb:latest
+          docker push docker.pkg.github.com/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/fsweb:latest
