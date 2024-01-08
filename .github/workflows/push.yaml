@@ -25,7 +25,7 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
         with:
-          registry: docker.pkg.github.com
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GH_TOKEN }}
 
@@ -33,7 +33,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
         with:
-          images: docker.pkg.github.com/diegocanas/fstack
+          images: ghcr.io/diegocanas/fstack
 
       - name: Build and push Docker image to GitHub Packages
         id: build-and-push
@@ -42,4 +42,4 @@ jobs:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            docker.pkg.github.com/diegocanas/fstack:latest
+            ghcr.io/diegocanas/fstack:latest
