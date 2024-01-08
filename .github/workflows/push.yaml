@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    permissions:
+    permissions: read-all|write-all
       contents: read
       packages: write
       id-token: write
@@ -28,7 +28,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GH_TOKEN }}
-          logout: false
 
       - name: Extract Docker metadata
         id: meta
